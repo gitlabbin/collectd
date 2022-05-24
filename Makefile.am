@@ -841,7 +841,7 @@ if BUILD_PLUGIN_EXEC
 pkglib_LTLIBRARIES += exec.la
 exec_la_SOURCES = src/exec.c
 exec_la_LDFLAGS = $(PLUGIN_LDFLAGS)
-exec_la_LIBADD = libcmds.la
+exec_la_LIBADD = libcmds.la libscribe.la
 endif
 
 if BUILD_PLUGIN_ETHSTAT
