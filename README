@@ -1,3 +1,5 @@
+Note: To create a release, add a tag - GH actions will build it and make a release.
+
  collectd - System information collection daemon
 =================================================
 https://collectd.org/
