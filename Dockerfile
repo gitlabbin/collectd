@@ -158,7 +158,8 @@ RUN cd /collectd && ./clean.sh && ./build.sh && ./configure \
         --without-libriemann \
         --without-libsigrok && make && make install 
 
-RUN pip install requests
+# pinned to last version of requests that supports python 2.7
+RUN pip install requests==2.27.1
 
 # configure
 RUN mkdir -p /opt/collectd/etc/collectd
