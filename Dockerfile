@@ -50,7 +50,6 @@ RUN apt-get install -y build-essential \
         libglib2.0-dev \
         liblvm2-dev \
         libmemcached-dev \
-        libmodbus-dev \
         libmnl-dev \
         libmysqlclient-dev \
         libnotify-dev \
@@ -124,6 +123,7 @@ RUN cd /collectd && ./clean.sh && ./build.sh && ./configure \
         --disable-ipmi \
         --disable-lua \
         --disable-mqtt \
+        --disable-modbus \
         --disable-intel_pmu \
         --disable-intel_rdt \
         --disable-static \
