@@ -1,5 +1,5 @@
 # Dockerfile for base collectd install
-FROM ubuntu:18.04 as base
+FROM ubuntu:16.04 as base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG insight_version
@@ -10,7 +10,6 @@ RUN apt-get upgrade -y
 # Install all apt-get utils and required repos
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y apt-utils && \
     # Install add-apt-repository
     apt-get install -y \
         software-properties-common && \
@@ -151,14 +150,13 @@ RUN cd /collectd && ./clean.sh && ./build.sh && ./configure \
         --disable-tokyotyrant \
         --disable-write_kafka \
         --with-perl-bindings="INSTALLDIRS=vendor INSTALL_BASE=" \
-        --with-libstatgrab=no \
-        --with-included-ltdl=no \
-        --with-libgrpc++=no \
-        --with-libgps=no \
-        --with-liblua=no \
-        --with-libriemann=no \
-        --with-libsigrok=no \
-        && make && make install 
+        --without-libstatgrab \
+        --without-included-ltdl \
+        --without-libgrpc++ \
+        --without-libgps \
+        --without-liblua \
+        --without-libriemann \
+        --without-libsigrok && make && make install 
 
 # pinned to last version of requests that supports python 2.7
 RUN pip install requests==2.27.1
