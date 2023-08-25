@@ -153,6 +153,7 @@ RUN cd /collectd && ./clean.sh && ./build.sh && ./configure \
         --disable-zfs-arc \
         --disable-tokyotyrant \
         --disable-write_kafka \
+        --disable-barometer \
         --with-perl-bindings="INSTALLDIRS=vendor INSTALL_BASE=" \
         --without-libstatgrab \
         --without-included-ltdl \
