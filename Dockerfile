@@ -1,5 +1,5 @@
 # Dockerfile for base collectd install
-FROM ubuntu:16.04 as base
+FROM ubuntu:18.04 as base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG insight_version
