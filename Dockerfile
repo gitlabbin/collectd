@@ -1,5 +1,5 @@
 # Dockerfile for base collectd install
-FROM ubuntu:16.04 as base
+FROM ubuntu:18.04 as base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG insight_version
@@ -25,29 +25,34 @@ RUN apt-get update && \
         git
 
 # Install dependencies
-RUN apt-get install -y build-essential \
-    libsnmp-dev bison libbison-dev flex autotools-dev \
-    pkg-config libtool libboost-all-dev libboost-test-dev \
-    libboost-program-options-dev libevent-dev automake g++ libssl-dev texinfo \
-        build-essential \
-        git \
-        curl \
-        libtool \
-        automake \
+RUN apt-get install -y \
         autoconf \
-        bison \
-        flex \
+        automake \
         autotools-dev \
-        libltdl-dev \
-        pkg-config \
+        bison \
+        build-essential \
+        curl \
+        default-jdk \
+        flex \
+        g++ \
+        git \
         iptables-dev \
         javahelper \
+        libatasmart-dev \
+        libbison-dev \
+        libboost-all-dev \
+        libboost-program-options-dev \
+        libboost-test-dev \
         libcurl4-gnutls-dev \
         libdbi0-dev \
         libesmtp-dev \
+        libevent-dev \
         libganglia1-dev \
         libgcrypt11-dev \
         libglib2.0-dev \
+        libi2c-dev \
+        libldap2-dev \
+        libltdl-dev \
         liblvm2-dev \
         libmemcached-dev \
         libmnl-dev \
@@ -59,26 +64,25 @@ RUN apt-get install -y build-essential \
         libpcap0.8-dev \
         libperl-dev \
         libpq-dev \
+        libprotobuf-c0-dev \
         librabbitmq-dev \
         librrd-dev \
         libsensors4-dev \
-        libsnmp-dev \
         libsnmp-dev>=5.4.2.1~dfsg-4~ \
+        libssl-dev \
+        libtool \
         libudev-dev \
+        libupsclient-dev \
         libvarnishapi-dev \
         libvirt-dev>=0.4.0-6 \
         libxml2-dev \
+        libyajl-dev \
         linux-libc-dev \
-        default-jdk \
+        pkg-config \
         protobuf-c-compiler \
         python-dev \
         python-pip \
-        libprotobuf-c0-dev \
-        libupsclient-dev \
-        libi2c-dev \
-        libyajl-dev \
-        libatasmart-dev \
-        libldap2-dev \
+        texinfo \
         wget
 
 #pull thrift (dependency)
@@ -149,6 +153,7 @@ RUN cd /collectd && ./clean.sh && ./build.sh && ./configure \
         --disable-zfs-arc \
         --disable-tokyotyrant \
         --disable-write_kafka \
+        --disable-barometer \
         --with-perl-bindings="INSTALLDIRS=vendor INSTALL_BASE=" \
         --without-libstatgrab \
         --without-included-ltdl \

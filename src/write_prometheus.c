@@ -735,7 +735,7 @@ metric_family_create(char *name, data_set_t const *ds, value_list_t const *vl,
 
   msg->name = name;
 
-  char help[1024];
+  char help[4096];
   snprintf(
       help, sizeof(help),
       "write_prometheus plugin: '%s' Type: '%s', Dstype: '%s', Dsname: '%s'",
