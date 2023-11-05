@@ -84,7 +84,9 @@ do
 done
 
 #also copy things needed to run
-cp -a -R --parents /lib/x86_64-linux-gnu $target_path
+#cp -a -R --parents /lib/x86_64-linux-gnu $target_path
+
+cp -a -R --parents /lib/$TARGET_PLATFORM $target_path
 
 for link in $(find $target_path -type l)
 do

@@ -123,3 +123,13 @@ this bundle based on collectd 5.7.0-sfx0.
 
 ## TODO
  - Automated testing across multiple Linux distros
+
+
+## macos 
+```sh
+brew install gnu-tar
+
+# add alias
+alias tar='gtar'
+
+```

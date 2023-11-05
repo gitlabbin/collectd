@@ -1,7 +1,20 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH=$BASEDIR/lib:$BASEDIR/lib/x86_64-linux-gnu:$BASEDIR/usr/lib:$BASEDIR/usr/lib/x86_64-linux-gnu:$BASEDIR/usr/lib/jvm/default-java/jre/lib/amd64/server
-export PYTHONHOME=$BASEDIR/usr/lib/python2.7
-export PYTHONPATH=$BASEDIR/usr/lib/python2.7:$BASEDIR/usr/lib/python2.7/plat-x86_64-linux-gnu:$BASEDIR/usr/lib/python2.7/lib-tk:/opt/collectd/usr/lib/python2.7/lib-old:$BASEDIR/usr/lib/python2.7/lib-dynload:$BASEDIR/usr/lib/python2.7/dist-packages:$BASEDIR/usr/local/lib/python2.7/dist-packages
+TARGET_OS=x86_64-linux-gnu
 
-exec -a collectd_wrapper $BASEDIR/lib/x86_64-linux-gnu/ld-2.*.so $BASEDIR/usr/sbin/collectd $*
+arch=$(uname -i)
+if [[ $arch == x86_64* ]]; then
+    echo "X64 Architecture"
+elif [[ $arch == i*86 ]]; then
+    echo "X32 Architecture"
+elif  [[ $arch == arm* ]]; then
+    echo "ARM Architecture"
+    TARGET_OS=aarch64-linux-gnu
+    echo "$TARGET_OS"
+fi
+
+export LD_LIBRARY_PATH=$BASEDIR/lib:$BASEDIR/lib/$TARGET_OS:$BASEDIR/usr/lib:$BASEDIR/usr/lib/$TARGET_OS:$BASEDIR/usr/lib/jvm/default-java/jre/lib/amd64/server
+export PYTHONHOME=$BASEDIR/usr/lib/python2.7
+export PYTHONPATH=$BASEDIR/usr/lib/python2.7:$BASEDIR/usr/lib/python2.7/plat-$TARGET_OS:$BASEDIR/usr/lib/python2.7/lib-tk:/opt/collectd/usr/lib/python2.7/lib-old:$BASEDIR/usr/lib/python2.7/lib-dynload:$BASEDIR/usr/lib/python2.7/dist-packages:$BASEDIR/usr/local/lib/python2.7/dist-packages
+
+exec -a collectd_wrapper $BASEDIR/lib/$TARGET_OS/ld-2.*.so $BASEDIR/usr/sbin/collectd $*
