@@ -1,5 +1,10 @@
 # Dockerfile for base collectd install
-FROM ubuntu:18.04 as base
+FROM --platform=${TARGETPLATFORM:-linux/amd64} ubuntu:18.04 as base
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG insight_version
@@ -108,8 +113,7 @@ RUN apt-get install -y libc6-dbg
 
 COPY . /collectd
 
-RUN cd /collectd && ./clean.sh && ./build.sh && ./configure \
-        --prefix /opt/collectd/usr \
+ENV CONFIG_ITEMS="--prefix /opt/collectd/usr \
         --with-data-max-name-len=1024 \
         --sysconfdir=/etc \
         --localstatedir=/var \
@@ -154,14 +158,22 @@ RUN cd /collectd && ./clean.sh && ./build.sh && ./configure \
         --disable-tokyotyrant \
         --disable-write_kafka \
         --disable-barometer \
-        --with-perl-bindings="INSTALLDIRS=vendor INSTALL_BASE=" \
         --without-libstatgrab \
         --without-included-ltdl \
         --without-libgrpc++ \
         --without-libgps \
         --without-liblua \
         --without-libriemann \
-        --without-libsigrok && make && make install 
+        --without-libsigrok "
+
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+        cd /collectd && ./clean.sh && ./build.sh && ./configure \
+        $CONFIG_ITEMS --with-perl-bindings="INSTALLDIRS=vendor INSTALL_BASE=" \
+        --disable-turbostat && make && make install; \
+    else \
+        cd /collectd && ./clean.sh && ./build.sh && ./configure \
+        $CONFIG_ITEMS --with-perl-bindings="INSTALLDIRS=vendor INSTALL_BASE=" && make && make install; \
+    fi
 
 # pinned to last version of requests that supports python 2.7
 RUN pip install requests==2.27.1
@@ -177,16 +189,21 @@ ADD docker-build/templates/collectd/managed_config /opt/collectd/etc/collectd/
 
 ADD docker-build/collect-libs.sh docker-build/symbol-gen.sh /opt/
 RUN /opt/symbol-gen.sh /opt/collectd /opt/collectd-symbols
-RUN /opt/collect-libs.sh /opt/collectd /opt/collectd
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+    export TARGET_PLATFORM=aarch64-linux-gnu; \
+    else export TARGET_PLATFORM=x86_64-linux-gnu; \
+    fi; \
+    echo $TARGETARCH; \
+    echo $TARGET_PLATFORM; \
+    /opt/collect-libs.sh /opt/collectd /opt/collectd;
 
 # Clean up unnecessary man files
 RUN rm -rf /opt/collectd/usr/share/man 
 
 #CMD ["/bin/bash"]
-FROM scratch as final-image
+FROM --platform=${TARGETPLATFORM:-linux/amd64} scratch as final-image
 
 COPY --from=base /etc/ssl/certs/ca-certificates.crt /collectd/etc/ssl/certs/ca-certificates.crt
 COPY --from=base /opt/collectd/ /collectd
 COPY --from=base /opt/collectd-symbols/ /collectd-symbols
 COPY docker-build/collectd_wrapper /collectd/usr/sbin
-
